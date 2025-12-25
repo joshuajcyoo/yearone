@@ -1,0 +1,118 @@
+.Home {
+  text-align: center;
+}
+
+.Home-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .Home-logo {
+    animation: Home-logo-spin infinite 20s linear;
+  }
+}
+
+.Home-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.Home-link {
+  color: #61dafb;
+}
+
+@keyframes Home-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.app-container {
+  max-width: 600px; /* Limits width on desktop so it looks like mobile */
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+/* --- THE MASONRY GRID --- */
+.grid-container {
+  padding: 10px;
+  /* No text align center, let the columns flow naturally */
+}
+
+.grid {
+  /* This creates vertical columns like a newspaper */
+  column-count: 2; /* 2 columns is standard for Pinterest on Mobile */
+  column-gap: 10px; /* Space between columns */
+}
+
+/* On larger screens (tablets/desktops), maybe go to 4 or 5 columns */
+@media (min-width: 600px) {
+  .grid {
+    column-count: 4; 
+  }
+}
+
+.square {
+  /* "break-inside: avoid" prevents a photo from being cut in half 
+     between column 1 and column 2 */
+  break-inside: avoid; 
+  
+  /* Space between items vertically */
+  margin-bottom: 10px; 
+  
+  /* Rounded Corners */
+  border-radius: 16px; 
+  overflow: hidden; /* Ensures the image doesn't bleed out of the rounded corners */
+  
+  /* Remove aspect-ratio so images keep their natural height (creating the stagger) */
+  /* aspect-ratio: 1 / 1;  <-- DELETED THIS */
+  
+  border: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent; /* Clean look */
+}
+
+.square-img {
+  width: 100%;
+  height: auto; /* Let height adjust based on image shape */
+  display: block;
+  /* Smooth transition if you want to add hover effects later */
+  transition: transform 0.2s ease;
+}
+
+/* Optional: Add a subtle shadow to make them pop like cards */
+.square img, .clue-container {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.clue-container {
+  background-color: #fff;
+  width: 100%;
+  /* Let height grow with the text */
+  min-height: 100px; 
+  padding: 15px;
+  
+  /* Keep the rounded corners on the clue box too */
+  border-radius: 16px; 
+  border: 2px dashed #ccc; /* Dashed border looks nice for a "missing photo" vibe */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
