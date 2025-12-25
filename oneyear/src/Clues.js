@@ -2,6 +2,7 @@ export const initialGridData = [
   {
     id: 0,
     icon: "🍕", // The icon shown initially
+    type: "image",
     initialPhoto: "/Images/oneyear1.jpg",
     clue: "Where we had our first slice together.", // The text shown if they go back without a photo
     letter: "W", // The secret letter revealed after upload
@@ -11,7 +12,8 @@ export const initialGridData = [
   {
     id: 1,
     icon: "🌳",
-    initialPhoto: "/Images/oneyear1.jpg",
+    type: "video",
+    initialPhoto: "/Images/oneyear4.mp4",
     clue: "Find the tree that looks like a high five.",
     letter: "I",
     photo: null,
@@ -20,7 +22,8 @@ export const initialGridData = [
   {
     id: 2,
     icon: "☕",
-    initialPhoto: "/Images/oneyear1.jpg",
+    type: "image",
+    initialPhoto: "/Images/oneyear3.jpg",
     clue: "Your favorite morning pick-me-up spot.",
     letter: "L",
     photo: null,

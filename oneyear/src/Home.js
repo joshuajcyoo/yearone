@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initialGridData } from './Clues';
 import logo from './logo.svg';
 
 import './App.css';
 
 function Home() {
-  const [grid, setGrid] = useState(initialGridData);
+  const [grid, setGrid] = useState(() => {
+    // Check if we have saved data
+    const saved = localStorage.getItem('photoScavengerHunt');
+    if (saved) {
+      // If yes, parse it and return it
+      return JSON.parse(saved);
+    } else {
+      // If no (first time user), return the default data
+      return initialGridData;
+    }
+  });
 
   const [activeSquare, setActiveSquare] = useState(null);
+
+  useEffect(() => {
+    // Whenever 'gridItems' changes, save it to the browser
+    localStorage.setItem('photoScavengerHunt', JSON.stringify(grid));
+  }, [grid]);
 
   const foundSquare = grid.find(item => item.id === activeSquare);
 
@@ -33,6 +48,24 @@ function Home() {
     }
   };
 
+  const renderMedia = (item, isGrid = true) => {
+    const commonClass = isGrid ? "square-img" : "detail-media"; // CSS class switch
+    
+    if (item.type === 'video') {
+      return (
+        <video 
+          src={item.initialMedia} 
+          className={commonClass}
+          autoPlay 
+          muted 
+          loop 
+          playsInline // Essential for iOS to not go fullscreen automatically
+        />
+      );
+    }
+    return <img src={item.initialMedia} alt="memory" className={commonClass} />;
+  };
+
   return (
     <div className="app-container">
       {activeSquare === null ? (
@@ -48,14 +81,24 @@ function Home() {
               >
                 {/* LOGIC: Show Photo if exists, OR Clue if revealed, OR Icon if new */}
                 {item.photo ? (
-                  <img src={item.photo} alt="memory" className="square-img" />
-                ) : item.isRevealed ? (
-                  <span className="small-clue">{item.clue}</span>
-                ) : 
-                (
-                  <img src={item.initialPhoto} alt="memory" className="square-img" />
-                )
-                }
+                  <img src={item.photo} alt="completed" className="square-img finished-img" />
+                ) : (
+                  /* PRIORITY 2 & 3: Initial Photo with optional Overlay (New/Active States) */
+                  /* We wrap the image and overlay together so they stack correctly */
+                  <div className="image-wrapper">
+                    {renderMedia(item)}
+
+                    {/* The base image - always visible in these states */}
+                    <img src={item.initialPhoto} alt="memory" className="square-img" />
+                    
+                    {/* The Overlay - Only visible if 'isRevealed' is true */}
+                    {item.isRevealed && (
+                      <div className="clue-overlay">
+                        <span className="small-clue">{item.clue}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </button>
             ))}
           </div>

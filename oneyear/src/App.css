@@ -65,54 +65,88 @@
 }
 
 .square {
-  /* "break-inside: avoid" prevents a photo from being cut in half 
-     between column 1 and column 2 */
-  break-inside: avoid; 
-  
-  /* Space between items vertically */
-  margin-bottom: 10px; 
-  
-  /* Rounded Corners */
-  border-radius: 16px; 
-  overflow: hidden; /* Ensures the image doesn't bleed out of the rounded corners */
-  
-  /* Remove aspect-ratio so images keep their natural height (creating the stagger) */
-  /* aspect-ratio: 1 / 1;  <-- DELETED THIS */
-  
+  /* Keep existing styles (break-inside, margin, rounded corners, etc.) */
+  break-inside: avoid;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  overflow: hidden; 
   border: none;
   cursor: pointer;
-  position: relative;
+  position: relative; /* Essential for absolute positioning inside */
   display: flex;
   flex-direction: column;
-  background-color: transparent; /* Clean look */
+  background-color: transparent; 
+  padding: 0; /* Ensure button padding doesn't mess up alignment */
+}
+
+/* New wrapper to hold image + overlay */
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .square-img {
   width: 100%;
-  height: auto; /* Let height adjust based on image shape */
+  height: auto;
   display: block;
-  /* Smooth transition if you want to add hover effects later */
   transition: transform 0.2s ease;
 }
-
-/* Optional: Add a subtle shadow to make them pop like cards */
-.square img, .clue-container {
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+.square-img, video.square-img {
+  width: 100%;
+  height: 100%; /* Important for the square/masonry fit */
+  object-fit: cover; /* This makes the video crop to fill the square perfectly */
+  display: block;
 }
 
-.clue-container {
-  background-color: #fff;
+/* Optional: make finished photos look slightly different */
+.finished-img {
+  border: 3px solid #4CAF50; /* Green border for completion */
+}
+
+/* --- THE NEW OVERLAY --- */
+.clue-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  /* Let height grow with the text */
-  min-height: 100px; 
-  padding: 15px;
+  height: 100%;
+  /* Dark semi-transparent background so white text pops */
+  background-color: rgba(0, 0, 0, 0.5); 
   
-  /* Keep the rounded corners on the clue box too */
-  border-radius: 16px; 
-  border: 2px dashed #ccc; /* Dashed border looks nice for a "missing photo" vibe */
-  
+  /* Center the text */
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box; 
+  padding: 10px;
   text-align: center;
+  
+  /* Fade in effect */
+  animation: fadeIn 0.3s ease-in-out;
 }
+
+.small-clue {
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: #ffffff; /* White text for contrast */
+  font-weight: 500;
+
+  white-space: normal; 
+  
+  /* FIXED: Break long words if they are too wide for the box */
+  overflow-wrap: break-word; 
+  word-wrap: break-word;
+  
+  /* Ensure text takes up width but respects padding */
+  width: 100%; 
+  max-width: 100%;
+}
+
+/* Simple fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+/* ... keep detail view styles below ... */
