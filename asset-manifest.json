@@ -1,9 +1,22 @@
 {
   "files": {
     "main.css": "/yearone/static/css/main.5f797ff8.css",
-    "main.js": "/yearone/static/js/main.d39e35f4.js",
+    "main.js": "/yearone/static/js/main.dd493e41.js",
     "static/js/453.27156038.chunk.js": "/yearone/static/js/453.27156038.chunk.js",
+    "static/media/y1_music.mp4": "/yearone/static/media/y1_music.d02460f7886afda47eb7.mp4",
+    "static/media/y1_recording.mp4": "/yearone/static/media/y1_recording.b14ead1ceffabeacc346.mp4",
+    "static/media/y1_gacha.mp4": "/yearone/static/media/y1_gacha.f9c2f212d6859f171d27.mp4",
+    "static/media/y1_clubbing.mp4": "/yearone/static/media/y1_clubbing.f936f6205004b081fc23.mp4",
+    "static/media/y1_workshop.mp4": "/yearone/static/media/y1_workshop.93e4b132ec29d3522963.mp4",
+    "static/media/y1_fit.mp4": "/yearone/static/media/y1_fit.16fddd61c81b49d44892.mp4",
     "static/media/Sacrifice.ttf": "/yearone/static/media/Sacrifice.7aaf8739c50251e1d187.ttf",
+    "static/media/y1_family.jpg": "/yearone/static/media/y1_family.b483a195d1c166bc9cf9.jpg",
+    "static/media/y1_festival.jpg": "/yearone/static/media/y1_festival.d255f8444828c34ecfb4.jpg",
+    "static/media/y1_scrabble.jpg": "/yearone/static/media/y1_scrabble.282672c3512fff7b51ba.jpg",
+    "static/media/y1_bumsan.jpg": "/yearone/static/media/y1_bumsan.3adbabbe5a177585105b.jpg",
+    "static/media/y1_food.jpg": "/yearone/static/media/y1_food.968a6380dd4fe4de2804.jpg",
+    "static/media/y1_friends.jpg": "/yearone/static/media/y1_friends.8cc9cca0749b276fee23.jpg",
+    "static/media/y1_skincare.jpg": "/yearone/static/media/y1_skincare.4af799d671ab13926d5e.jpg",
     "static/media/Montserrat-Bold.ttf": "/yearone/static/media/Montserrat-Bold.50f0257aa1e905f4bfaf.ttf",
     "static/media/Montserrat-SemiBold.ttf": "/yearone/static/media/Montserrat-SemiBold.93b37a465fc4ec0d0415.ttf",
     "static/media/Nexa-Heavy.ttf": "/yearone/static/media/Nexa-Heavy.13e16a1c3c48dd492fa9.ttf",
@@ -28,11 +41,11 @@
     "static/media/check-circle.svg": "/yearone/static/media/check-circle.cfd787d00ef27cb90dec0d09af4add18.svg",
     "static/media/back-carrot.svg": "/yearone/static/media/back-carrot.321b22b85dfc5fad6da1bfd50b874d7d.svg",
     "main.5f797ff8.css.map": "/yearone/static/css/main.5f797ff8.css.map",
-    "main.d39e35f4.js.map": "/yearone/static/js/main.d39e35f4.js.map",
+    "main.dd493e41.js.map": "/yearone/static/js/main.dd493e41.js.map",
     "453.27156038.chunk.js.map": "/yearone/static/js/453.27156038.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5f797ff8.css",
-    "static/js/main.d39e35f4.js"
+    "static/js/main.dd493e41.js"
   ]
 }
