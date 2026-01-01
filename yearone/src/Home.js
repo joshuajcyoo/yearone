@@ -1,40 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { initialGridData } from './Clues';
-import logo from './logo.svg';
 import {ReactComponent as BackArrow} from './Logos/back-carrot.svg'
 import {ReactComponent as EyeOpen} from './Logos/eye-open.svg'
 import {ReactComponent as EyeClosed} from './Logos/eye-closed.svg'
 import {ReactComponent as LockOpen} from './Logos/lock-open.svg'
 import {ReactComponent as LockClosed} from './Logos/lock-closed.svg'
-import {ReactComponent as CheckCircle} from './Logos/check-circle.svg'
-
 import './App.css';
 
 function Home() {
-  const [grid, setGrid] = useState(initialGridData);
+  // const [grid, setGrid] = useState(initialGridData);
   
-  // const [grid, setGrid] = useState(() => {
-  //   // Check if we have saved data
-  //   const saved = localStorage.getItem('photoScavengerHunt');
-  //   if (saved) {
-  //     // If yes, parse it and return it
-  //     return JSON.parse(saved);
-  //   } else {
-  //     // If no (first time user), return the default data
-  //     return initialGridData;
-  //   }
-  // });
+  const [grid, setGrid] = useState(() => {
+    // Check if we have saved data
+    const saved = localStorage.getItem('photoScavengerHunt');
+    if (saved) {
+      // If yes, parse it and return it
+      return JSON.parse(saved);
+    } else {
+      // If no (first time user), return the default data
+      return initialGridData;
+    }
+  });
 
   const [activeSquare, setActiveSquare] = useState(null);
 
-  // useEffect(() => {
-  //   // Whenever 'gridItems' changes, save it to the browser
-  //   localStorage.setItem('photoScavengerHunt', JSON.stringify(grid));
-  // }, [grid]);
+  useEffect(() => {
+    // Whenever 'gridItems' changes, save it to the browser
+    localStorage.setItem('photoScavengerHunt', JSON.stringify(grid));
+  }, [grid]);
 
   const foundSquare = grid.find(item => item.id === activeSquare);
 
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState((!localStorage.getItem('photoScavengerHunt') ? "howto" : null));
 
   const handleSquareClick = (id) => {
     // Mark the item as "revealed" so the icon disappears and text appears later
@@ -51,36 +48,81 @@ function Home() {
     setActiveSquare(id); // Navigate to the detail view
   };
 
-  const handlePhotoUpload = (event) => {
+  const resizeImage = (file, maxWidth = 800) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const elem = document.createElement('canvas');
+          const scaleFactor = maxWidth / img.width;
+          elem.width = maxWidth;
+          elem.height = img.height * scaleFactor;
+          const ctx = elem.getContext('2d');
+          ctx.drawImage(img, 0, 0, elem.width, elem.height);
+          // Compress to JPEG at 70% quality
+          resolve(ctx.canvas.toDataURL('image/jpeg', 0.7)); 
+        };
+      };
+    });
+  };
+
+  const handlePhotoUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Create a fake local URL for the uploaded image so we can display it
-      const photoUrl = URL.createObjectURL(file);
-      
-      const updatedItems = grid.map(item => 
-        item.id === activeSquare ? { ...item, photo: photoUrl } : item
-      );
-      setGrid(updatedItems);
+      try {
+        // Resize the image to max 800px width (keeps file size small)
+        const compressedBase64 = await resizeImage(file, 800);
+        
+        const updatedItems = grid.map(item => 
+          item.id === activeSquare ? { ...item, photo: compressedBase64 } : item
+        );
+        setGrid(updatedItems);
+      } catch (error) {
+        console.error("Error resizing image:", error);
+      }
+      event.target.value = null;
     }
+  };
+
+  const handleRemovePhoto = () => {
+    // Optional: Clean up memory by revoking the old URL
+    const currentItem = grid.find(item => item.id === activeSquare);
+    if (currentItem && currentItem.photo) {
+      URL.revokeObjectURL(currentItem.photo);
+    }
+
+    // Update state: Set the photo property to null for the active square
+    const updatedItems = grid.map(item => 
+      item.id === activeSquare ? { ...item, photo: null } : item
+    );
+    setGrid(updatedItems);
   };
 
   const renderMedia = (item, isGrid = true) => {
     const detailVideoType = item.videoType === "horizontal" ? "detail-media horizontal-video" : (item.videoType === "vertical" ? "detail-media vertical-video" : "detail-media")
-    const homeVideoType = item.videoType === "horizontal" ? "square-img horizontal-video" : "square-img"
-    
+    let homeVideoType = "square-img";
+    if (item.videoType === "horizontal" && !item.photo) {
+      homeVideoType = "square-img horizontal-video";
+    } else if (item.videoType === "horizontal" && item.photo) {
+      homeVideoType = "square-img finished-img horizontal-video";
+    } else if (item.videoType !== "horizontal" && item.photo) {
+      homeVideoType = "square-img finished-img";
+    }    
     const commonClass = isGrid ? homeVideoType : detailVideoType; // CSS class switch
     
     if (item.type === 'video' && isGrid) {
       return (
-        <div>Hello</div>
-        // <video 
-        //   src={item.initialPhoto} 
-        //   className={commonClass}
-        //   autoPlay 
-        //   muted 
-        //   loop 
-        //   playsInline // Essential for iOS to not go fullscreen automatically
-        // />
+        <video 
+          src={item.initialPhoto} 
+          className={commonClass}
+          autoPlay 
+          muted 
+          loop 
+          playsInline // Essential for iOS to not go fullscreen automatically
+        />
       );
     }
     else if (item.type === 'video' && !isGrid) {
@@ -132,7 +174,16 @@ function Home() {
   return (
     <div className="app-container">
       {modal && (
-      <div className="modal-overlay" onClick={() => setModal(null)}>
+      <div className="modal-overlay" onClick={() => {
+        setModal(null); 
+        setGrid(prev =>
+          prev.map((item, index) =>
+            index === 0
+              ? { ...item, howto: false }
+              : item
+          )
+        );
+      }}>
         {/* stopPropagation prevents clicking the white box from closing the modal */}
         <div className={`modal-content-${modal === "howto" ? 'howto' : (modal === "about" ? 'about' : "")}`} onClick={(event) => event.stopPropagation()}>
           
@@ -143,17 +194,17 @@ function Home() {
             <div className="modal-body-howto">
               <div className="modal-body-howto-title">How To</div>
               <div className="modal-body-howto-message first">Welcome to my photo scavenger hunt!</div>
-              <div className="modal-body-howto-message">Each photo or video is connected to a meaningful facet of our relationship, which you can read more by clicking on each item.</div>
-              <div className="modal-body-howto-message">At the bottom of each page, there is a <span style={{fontFamily: 'Cabinet ExtraBold'}}>prompt</span> instructing a specific photo, as well as a button to <span style={{fontFamily: 'Cabinet ExtraBold'}}>take</span> (or upload) <span style={{fontFamily: 'Cabinet ExtraBold'}}>your photo</span>.</div>
+              <div className="modal-body-howto-message">Each photo or video is connected to a meaningful facet of our relationship. Click on each one of them to start and read more.</div>
+              <div className="modal-body-howto-message">On each page, there is a <span style={{fontFamily: 'Cabinet ExtraBold'}}>prompt</span> instructing a specific type of photo, as well as a button to <span style={{fontFamily: 'Cabinet ExtraBold'}}>take</span> (or upload) <span style={{fontFamily: 'Cabinet ExtraBold'}}>your photo</span>.</div>
+              <div className="modal-body-howto-message">Don't worry about taking all of your photos at once or refreshing the page. Your progress will save even if you leave.</div>
               <div className="modal-body-howto-message">Upon taking your photo, navigate back to the home page to view your updated grid.</div>
-              <div className="modal-body-howto-message">Don't worry about refreshing the page either, your progress will save even if you leave the page.</div>
             </div>
           )}
 
           {modal === 'about' && (
             <div className="modal-body-about">
               <div className="modal-body-about-title">About</div>
-              <div className="modal-body-about-message first">When I'm old and I reflect on the year 2025, the first reflection I will have is that this was one of the happiest years of my entire life, <span style={{fontFamily: 'Cabinet Bold'}}>because of you</span>.</div>
+              <div className="modal-body-about-message first">When I'm old and I reflect on the year 2025, the first reflection I will have is that this was one of the happiest years of my entire life, because of you.</div>
               <div className="modal-body-about-message">I'll reflect on how we dismantled the distance between us with the most incredibly fun four-day vacations ever, how we thoroughly and methodically built the foundation of our relationship to support our individual growth and aspirations, how you moved to me and fundamentally rewired what I envisioned my life to be, and how I finally was given the chance to truly love the person I've always felt I've been destined to love from the beginning.</div>
               <div className="modal-body-about-message">January 2, 2026 will mark exactly one year since we've been together, and I wanted to create a space for all of these reflections over the past year to live and exist. You also know that I love creating brain games just as much as you love solving them.</div>
               <div className="modal-body-about-message">Happy one year anniversary Darahnea. You're the greatest gift in the entire world to me.</div>
@@ -188,7 +239,7 @@ function Home() {
                 {item.photo ? (
                   <div className={`image-wrapper ${item.photo ? 'finished-wrapper' : ''}`}>
                     {/* The base image - always visible in these states */}
-                    <img src={item.initialPhoto} className="square-img finished-img" />
+                    <img src={item.initialPhoto} className={item.videoType === "horizontal" ? 'square-img finished-img horizontal-video' : 'square-img finished-img'} />
 
                     {(item.isRevealed && !item.photo) &&
                       <button 
@@ -229,7 +280,8 @@ function Home() {
                   /* We wrap the image and overlay together so they stack correctly */
                   <div className="image-wrapper">
                     {/* The base image - always visible in these states */}
-                    <img src={item.initialPhoto} className={item.videoType === "horizontal" ? 'square-img horizontal-video' : 'square-img'} />
+                    {/* <img src={item.initialPhoto} className={item.videoType === "horizontal" ? 'square-img horizontal-video' : 'square-img'} /> */}
+                    {renderMedia(item, true)}
 
                     {item.isRevealed &&
                       <button 
@@ -290,8 +342,8 @@ function Home() {
               <div className="secret-reveal">
                 <div className="clue-text glowpulse">{foundSquare.confirmation}</div>
                 <div className="upload-btn-container">
-                  <label className="upload-btn-success">
-                    Uploaded!
+                  <label onClick={handleRemovePhoto} className="upload-btn-success">
+                    Remove Photo
                   </label>
                 </div>
 

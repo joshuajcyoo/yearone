@@ -86,7 +86,7 @@
   width: 77%;
   min-height: 40%;
   padding: 25px;
-  padding-bottom: 35px;
+  padding-bottom: 25px;
   border-radius: 16px;
   position: relative;
   
@@ -377,10 +377,6 @@
   background-color: transparent;
 }
 
-.toggle-icon-btn:active {
-  transform: scale(0.9);
-  background-color: rgba(0,0,0,0.1);
-}
 .clue-icon-btn {
   /* Position Top Right */
   position: absolute;
@@ -411,11 +407,6 @@
   background-color: transparent;
 }
 
-.clue-icon-btn:active {
-  transform: scale(0.9);
-  background-color: rgba(0,0,0,0.1);
-}
-
 .square-img {
   width: 100%;
   height: auto;
@@ -429,11 +420,10 @@
   display: block;
 
   max-height: 260px; /* Adjust this number down to make them shorter */
-  min-height: 200px;
   z-index: 19;
 }
 .square-img.horizontal-video {
-  height: 220px;
+  height: 140px;
 }
 
 /* Optional: make finished photos look slightly different */
@@ -674,12 +664,6 @@
   text-align: center;
   /* font-style: italic; */
 }
-/* .clue-text.glowpulse {
-  text-shadow:
-    0 0 10px rgba(255,255,255,1),
-    0 0 20px rgba(255,255,255,0.9),
-    0 0 32px rgba(255,255,255,0.7);
-} */
 
 .upload-btn-container {
   font-family: Cabinet Extrabold;
@@ -697,7 +681,7 @@
 }
 .upload-btn-success {
   background-color: #FFFFFF;
-  color: #3A7D44;
+  color: #FF2C2C;
   border-radius: 8px;
   padding: 10px;
 }
